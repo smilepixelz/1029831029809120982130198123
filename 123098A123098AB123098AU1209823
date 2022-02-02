@@ -405,7 +405,6 @@ coroutine.resume(coroutine.create(function()
         Mask["GlowEyes"].Color = color
     end
 end))
-
 coroutine.resume(coroutine.create(function()
     while wait() do
     	local hue = tick() % t / t
@@ -419,7 +418,31 @@ coroutine.resume(coroutine.create(function()
     	        color = Color3.fromRGB(255, 255, 255)
     	        game.Players.LocalPlayer.Character.Head.Color = color
     	    end
-    	end
+    	elseif phase3 == true then
+    	    game.Workspace.ye.Color = color
+	        local colors = {
+		    Color3.fromRGB(255, 0, 0),
+		    Color3.fromRGB(32, 246, 250),
+		    Color3.fromRGB(250, 163, 32),
+		    Color3.fromRGB(51, 32, 250),
+		    Color3.fromRGB(91, 47, 151),
+		    Color3.fromRGB(40, 153, 38),
+		    Color3.fromRGB(255, 208, 0)
+		}
+		for i,v in pairs(colors) do 
+		    local args = {
+			[1] = {
+			    [1] = getrenv()._G.Pass,
+			    [2] = "KnifeColor",
+			    [3] = "ChangeColor",
+			    [4] = v, --[[Color3]]
+			    [5] = 0.3,
+			}
+		    }
+
+		    game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args))
+		end
+        end
         Mask["Gems"].Color = color
         Mask["GlowEyes"].Color = color
         Mask["Perl"].Color = color
@@ -773,7 +796,7 @@ mouse.KeyDown:Connect(function(k)
         damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "HeavyHitEffect", 1, "Knockback")
         deb6 = false
     elseif k == "7" then 
-        if phase2 == true then return end
+        if phase2 == true or humansoulmode == true then return end
         chat("...")
         local Anim = Instance.new("Animation")
         Anim.AnimationId = "rbxassetid://3733309848"
@@ -818,7 +841,10 @@ mouse.KeyDown:Connect(function(k)
         humansoulmode = true
         CurrentPhase.Text = "Current Phase - No.3"
         k:AdjustSpeed(999)
-    end
+    elseif k =="8" then 
+    	if phase2 == true or phase3 == true or humansoulmode == true then then return end
+    	chat("Greetings.")
+	CurrentPhase.Text = "Current Phase - No.4"
 end)
 
 function changeknifecolor(color)
@@ -974,6 +1000,13 @@ mouse.KeyDown:Connect(function(key)
     end
 end)
 
+mouse.KeyDown:Connect(function(key)
+    if phase3 ~= true then return end
+    if key == "z" then 
+    	print("PlaceHolder")
+    end
+end)
+
 local blocking = false 
 
 function Block()
@@ -1032,7 +1065,7 @@ end)
 
 game.Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
     if game.Players.LocalPlayer.Character.Humanoid.Health == 0 then
-        if phase2 == true then 
+        if phase2 == true or phase3 == true then 
             game.Players.LocalPlayer.Character.Humanoid.Health = 1
             return
         end
@@ -1154,8 +1187,8 @@ end)
 local humanoid = game.Players.LocalPlayer.Character.Humanoid
 local currentHealth = humanoid.Health
 humanoid.HealthChanged:Connect(function(health)
-	local change = math.abs(currentHealth - health)
-	local player = game.Players.LocalPlayer
+    local change = math.abs(currentHealth - health)
+    local player = game.Players.LocalPlayer
     local char = getlockchar()
     for _,v in pairs(game.workspace:GetChildren()) do
     
