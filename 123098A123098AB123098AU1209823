@@ -1499,6 +1499,7 @@ humanoid.HealthChanged:Connect(function(health)
             ["Velocity"] = Vector3.new(0, 0.0001, 0),
             ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick,
             ["Damage"] = math.clamp(change, 0, 40)
+	    ["SpecialKey"] = "91203"
         }
     }
     
