@@ -329,6 +329,7 @@ local LockOn = game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.Lo
 
 local phase2 = false
 local humansoulmode = false
+local phase3 = false
 
 local args = {
     [1] = {
@@ -366,10 +367,133 @@ game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args
 
 local t = 5; --how long does it take to go through the rainbow
 
+local min, max, abs = math.min, math.max, math.abs
+
+local Hsx = {}
+
+function Hsx.rgb2hsv( r, g, b )
+	local M, m = max( r, g, b ), min( r, g, b )
+	local C = M - m
+	local K = 1.0/(6.0 * C)
+	local h = 0.0
+	if C ~= 0.0 then
+		if M == r then     h = ((g - b) * K) % 1.0
+		elseif M == g then h = (b - r) * K + 1.0/3.0
+		else               h = (r - g) * K + 2.0/3.0
+		end
+	end
+	return h, M == 0.0 and 0.0 or C / M, M
+end
+
+function Hsx.hsv2rgb( h, s, v )
+	local C = v * s
+	local m = v - C
+	local r, g, b = m, m, m
+	if h == h then
+		local h_ = (h % 1.0) * 6
+		local X = C * (1 - abs(h_ % 2 - 1))
+		C, X = C + m, X + m
+		if     h_ < 1 then r, g, b = C, X, m
+		elseif h_ < 2 then r, g, b = X, C, m
+		elseif h_ < 3 then r, g, b = m, C, X
+		elseif h_ < 4 then r, g, b = m, X, C
+		elseif h_ < 5 then r, g, b = X, m, C
+		else               r, g, b = C, m, X
+		end
+	end
+	return r, g, b
+end
+
+function Hsx.rgb2hsl( r, g, b )
+	local M, m = max( r, g, b ), min( r, g, b )
+	local C = M - m
+	local K = 1.0 / (6*C)
+	local h = 0
+	if C ~= 0 then
+		if M == r then     h = ((g - b) * K) % 1.0
+		elseif M == g then h = (b - r) * K + 1.0/3.0
+		else               h = (r - g) * K + 2.0/3.0
+		end
+	end
+	local l = 0.5 * (M + m)
+	local s = 0
+	if l > 0 and l < 1 then
+		s = C / (1-abs(l + l - 1))
+	end
+	return h, s, l
+end
+
+function Hsx.hsl2rgb( h, s, l )
+	local C = ( 1 - abs( l + l - 1 ))*s
+	local m = l - 0.5*C
+	local r, g, b = m, m, m
+	if h == h then
+		local h_ = (h % 1.0) * 6.0
+		local X = C * (1 - abs(h_ % 2 - 1))
+		C, X = C + m, X + m
+		if     h_ < 1 then r, g, b = C, X, m
+		elseif h_ < 2 then r, g, b = X, C, m
+		elseif h_ < 3 then r, g, b = m, C, X
+		elseif h_ < 4 then r, g, b = m, X, C
+		elseif h_ < 5 then r, g, b = X, m, C
+		else               r, g, b = C, m, X
+		end
+	end
+	return r, g, b
+end
+
+
+local NAN = 0/0
+
+function Hsx.rgb2hsi( r, g, b )
+	local M, m = max( r, g, b ), min( r, g, b )
+	local C = M - m
+	local K = 1.0 / (6*C)
+	local h = NAN
+	if     C ~= 0 then
+		if M == r then     h = ((g - b) * K % 1.0)
+		elseif M == g then h = (b - r) * K + 1.0/3.0
+		else               h = (r - g) * K + 2.0/3.0
+		end
+	end
+	local i = (r + g + b) * (1.0/3.0)
+	local s = i == 0.0 and 0.0 or (1.0 - m/i)
+	return h, s, i
+end
+
+function Hsx.hsi2rgb( h, s, i )
+	local cos, PI2 = math.cos, math.pi*2
+	h = ( h % 1.0 )
+	local r, g, b
+	if     h <= 1.0/3.0 then
+		b = 1.0 - s
+		r = 1.0 + s*cos( h*PI2 )/cos( (1.0/6.0 - h)*PI2 )
+		g = 3.0 - r - b
+	elseif h <= 2.0/3.0 then
+		h = h - 1.0/3.0
+		r = 1.0 - s
+		g = 1.0 + s*cos( h*PI2 )/cos( (1.0/6.0 - h )*PI2 )
+		b = 3.0 - r - g
+	else
+		h = h - 2.0/3.0
+		g = 1.0 - s
+		b = 1.0 + s*cos( h*PI2 )/cos( (1.0/6.0 - h )*PI2 )
+		r = 3.0 - g - b
+	end
+	return i * r, i * g, i * b
+end
+
 coroutine.resume(coroutine.create(function()
     while wait() do
     	local hue = tick() % t / t
     	local color = Color3.fromHSV(hue, 1, 1)
+    	if phase3 == true then 
+        	local hue = tick() % t / t
+        	local color = Color3.fromHSV(hue, 1, 1)
+        	if phase3 ~= true then return end
+            color3rgb = color
+            return 
+        end
     	if phase2 == true then 
     	    m = math.random(0, 1)
     	    if m == 0 then 
@@ -378,7 +502,7 @@ coroutine.resume(coroutine.create(function()
     	        color = Color3.new(255, 255, 255)
     	    end
     	elseif humansoulmode == true then 
-    	    break
+    	    return
     	end
     	local args = {
             [1] = {
@@ -401,14 +525,16 @@ coroutine.resume(coroutine.create(function()
         }
                 
         game:GetService("ReplicatedStorage").Remotes.SwordHandler:FireServer(unpack(args))
-        Mask["Gems"].Color = color
-        Mask["GlowEyes"].Color = color
     end
 end))
+
 coroutine.resume(coroutine.create(function()
     while wait() do
     	local hue = tick() % t / t
     	local color = Color3.fromHSV(hue, 1, 1)
+    	if phase3 == true then 
+    	    return 
+    	end
     	if phase2 == true then 
     	    m = math.random(0, 1)
     	    if m == 0 then 
@@ -419,33 +545,57 @@ coroutine.resume(coroutine.create(function()
     	        game.Players.LocalPlayer.Character.Head.Color = color
     	    end
     	elseif phase3 == true then
-    	    game.Workspace.ye.Color = color
-	        local colors = {
-		    Color3.fromRGB(255, 0, 0),
-		    Color3.fromRGB(32, 246, 250),
-		    Color3.fromRGB(250, 163, 32),
-		    Color3.fromRGB(51, 32, 250),
-		    Color3.fromRGB(91, 47, 151),
-		    Color3.fromRGB(40, 153, 38),
-		    Color3.fromRGB(255, 208, 0)
-		}
-		for i,v in pairs(colors) do 
-		    local args = {
-			[1] = {
-			    [1] = getrenv()._G.Pass,
-			    [2] = "KnifeColor",
-			    [3] = "ChangeColor",
-			    [4] = v, --[[Color3]]
-			    [5] = 0.3,
-			}
-		    }
-
-		    game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args))
-		end
+    	    color3rgb = Color3.fromRGB(Hsx.hsv2rgb(hue, 1, 1))
         end
         Mask["Gems"].Color = color
         Mask["GlowEyes"].Color = color
         Mask["Perl"].Color = color
+    end
+end))
+
+local color3rgb = Color3.fromRGB(255, 255, 255)
+
+coroutine.resume(coroutine.create(function()
+    while wait() do
+    	local hue = tick() % t / t
+    	local color = Color3.fromHSV(hue, 1, 1)
+    	if phase3 ~= true then return end
+        color3rgb = Color3.fromRGB(Hsx.hsv2rgb(hue, 1, 1))
+    end
+end))
+
+coroutine.resume(coroutine.create(function()
+    while wait() do
+    	local hue = tick() % t / t
+    	local color = Color3.fromHSV(hue, 1, 1)
+    	if phase3 == true then 
+            local colors = {
+                Color3.fromRGB(255, 0, 0),
+                Color3.fromRGB(32, 246, 250),
+                Color3.fromRGB(250, 163, 32),
+                Color3.fromRGB(51, 32, 250),
+                Color3.fromRGB(91, 47, 151),
+                Color3.fromRGB(40, 153, 38),
+                Color3.fromRGB(255, 208, 0)
+            }
+            for i,v in pairs(colors) do 
+                local args = {
+                    [1] = {
+                        [1] = getrenv()._G.Pass,
+                        [2] = "KnifeColor",
+                        [3] = "ChangeColor",
+                        [4] = v, --[[Color3]]
+                        [5] = 0.3,
+                    }
+                }
+                
+                game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args))
+                Mask["Gems"].Color = v
+                Mask["GlowEyes"].Color = v
+                Mask["Perl"].Color = v
+                color3rgb = v
+            end
+        end
     end
 end))
 
@@ -640,6 +790,7 @@ end
 local mouse = game.Players.LocalPlayer:GetMouse()
 mouse.KeyDown:Connect(function(k) 
     if humansoulmode == true then return end
+    if phase3 == true then return end
     if k == "r" then
         print(key)
         function getlockchar()
@@ -796,7 +947,7 @@ mouse.KeyDown:Connect(function(k)
         damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "HeavyHitEffect", 1, "Knockback")
         deb6 = false
     elseif k == "7" then 
-        if phase2 == true or humansoulmode == true then return end
+        if phase2 == true or phase3 == true then return end
         chat("...")
         local Anim = Instance.new("Animation")
         Anim.AnimationId = "rbxassetid://3733309848"
@@ -841,10 +992,98 @@ mouse.KeyDown:Connect(function(k)
         humansoulmode = true
         CurrentPhase.Text = "Current Phase - No.3"
         k:AdjustSpeed(999)
-    elseif k =="8" then 
-    	if phase2 == true or phase3 == true or humansoulmode == true then then return end
-    	chat("Greetings.")
-	CurrentPhase.Text = "Current Phase - No.4"
+    elseif k == "8" then 
+        chat("Greetings.")
+        wait(1)
+        chat("...")
+        phase3 = true
+        CurrentPhase.Text = "Current Phase - No.4"
+                local userInputService = game:GetService("UserInputService")
+            on = true
+            posz = 0
+            posx = 0
+            local perseverance = {
+            Parent = game.workspace,
+            Name = 'ye',
+            Material = Enum.Material.Neon,
+            Color = Color3.fromRGB(255,255,255),
+            Transparency = 0
+            }
+            coroutine.resume(coroutine.create(function() 
+                while true do wait()
+                    perseverance.Color = color3rgb
+                end
+            end))
+                times = 0
+                _G.soulsmode = 1
+            _G.closed = false
+            local effects = game.Players.LocalPlayer.Character.Effects
+            local rs = game:GetService("RunService")
+            
+                    local player = game.Players.LocalPlayer
+            local Character = player.Character
+            local args = {
+                [1] = {
+                    [1] = getrenv()._G.Pass,
+                    [2] = "KnifeProjectileOrange",
+                    [3] = "Spawn",
+                    [4] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector *10
+                }
+            }
+            game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args))
+            local projectiles = game.Players.LocalPlayer.Character.Attacks
+            for i,v in pairs(projectiles:GetChildren()) do
+            if v.Name == "KnifeSlashProjectileOrange" or "Removing" then
+                v:WaitForChild("BodyVelocity"):Destroy()
+                v:WaitForChild("ParticleEmitter"):Destroy()
+                coroutine.resume(coroutine.create(function() 
+            
+                    
+            while 
+            wait(0.05)
+            do
+                if _G.closed then
+                    break
+                    end
+                times = times + 1
+                if 
+                times == 6
+                then 
+                times = 0
+                end
+                if times == 1 then
+            v.Position = Character.HumanoidRootPart.Position - Vector3.new(0,40,0)
+            elseif times == 2 then
+                v.Position = Character.HumanoidRootPart.Position - Vector3.new(10,40,0)
+            elseif times == 3 then
+                v.Position = Character.HumanoidRootPart.Position - Vector3.new(0,30,10)
+            elseif times == 4 then
+                v.Position = Character.HumanoidRootPart.Position - Vector3.new(0,30,-10)
+            elseif times == 5 then
+                v.Position = Character.HumanoidRootPart.Position - Vector3.new(-10,30,0)
+                end
+            -- Script generated by SimpleSpy - credits to exx#9394
+            
+            local args1 = {
+                [1] = {
+                    [1] = getrenv()._G.Pass,
+                    [2] = "KnifeProjectileOrange",
+                    [3] = "Hit",
+                    [4] = v,
+                    [5] = v.CFrame,
+                    [6] = perseverance
+                }
+            }
+            
+            
+            if _G.soulsmode == 1 then
+            game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args1))
+            end
+            end
+            end))
+            end
+        end
+    end
 end)
 
 function changeknifecolor(color)
@@ -994,16 +1233,68 @@ mouse.KeyDown:Connect(function(key)
             damage(Vector3.new(0, -0.1, 0), 10, "BiggerBurstEffect", 1, "Knockback")
         end
         damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "HeavyHitEffect", 1, "Knockback")
+    elseif key == "v" then 
+        changeknifecolor(color[4])
+        chat("Gravity Inverse.")
+        local grav = game.Workspace.Gravity
+        game.Workspace.Gravity = 20 
+        wait(10)
+        repeat wait()
+            game.Workspace.Gravity = game.Workspace.Gravity + 1
+        until game.Workspace.Gravity == 196
+    elseif key == "b" then 
+        changeknifecolor(color[5])
+        chat("Perseverance.")
+        local args = {
+            [1] = {
+                [1] = getrenv()._G.Pass,
+                [2] = "IntegrityAttack2",
+            }
+        }
+        
+        game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args))
+        wait(2.5)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = getlockchar().HumanoidRootPart.CFrame * CFrame.new(0,0,-6)
+        local Anim = Instance.new("Animation")
+        Anim.AnimationId = "rbxassetid://5861141100"
+        local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+        k:Play()
+        wait(1)
+        damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 30 + Vector3.new(0, 20, 0), 40, "HeavyHitEffect", 1, "Knockback")
+        wait()
+        local args = {
+            [1] = {
+                [1] = getrenv()._G.Pass,
+                [2] = "IntegrityAttack",
+            }
+        }
+        
+        game:GetService("ReplicatedStorage").Remotes.CharaMoves:InvokeServer(unpack(args))
+    elseif key == "n" then 
+            changeknifecolor(color[6])
+            chat("Kindness.")
+            local args = {
+                [1] = {
+                    [1] = getrenv()._G.Pass,
+                    [2] = "Blocking",
+                    [3] = true
+                }
+            }
+            
+            game:GetService("ReplicatedStorage").Remotes.Functions:InvokeServer(unpack(args))
+            wait(15)
+            local args = {
+                [1] = {
+                    [1] = getrenv()._G.Pass,
+                    [2] = "Blocking",
+                    [3] = false
+                }
+            }
+            
+            game:GetService("ReplicatedStorage").Remotes.Functions:InvokeServer(unpack(args))
     elseif key == "r" then 
         camshake()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = getlockchar().HumanoidRootPart.CFrame * CFrame.new(0,0,-3)
-    end
-end)
-
-mouse.KeyDown:Connect(function(key)
-    if phase3 ~= true then return end
-    if key == "z" then 
-    	print("PlaceHolder")
     end
 end)
 
@@ -1187,8 +1478,8 @@ end)
 local humanoid = game.Players.LocalPlayer.Character.Humanoid
 local currentHealth = humanoid.Health
 humanoid.HealthChanged:Connect(function(health)
-    local change = math.abs(currentHealth - health)
-    local player = game.Players.LocalPlayer
+	local change = math.abs(currentHealth - health)
+	local player = game.Players.LocalPlayer
     local char = getlockchar()
     for _,v in pairs(game.workspace:GetChildren()) do
     
