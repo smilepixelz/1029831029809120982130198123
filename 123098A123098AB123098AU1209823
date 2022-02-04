@@ -1352,6 +1352,7 @@ local posing = false
 
 function pose()
 	game.Players.LocalPlayer.Backpack.Main.WalkSpeed.Value = 0
+	game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
 	posing = true
 	local Anim = Instance.new("Animation")
 	Anim.AnimationId = "rbxassetid://7507481748"
@@ -1359,6 +1360,7 @@ function pose()
 	track:Play();
 	repeat wait() until posing == false 
 	track:Stop();
+	game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
 	game.Players.LocalPlayer.Backpack.Main.WalkSpeed.Value = 65
 end
 
