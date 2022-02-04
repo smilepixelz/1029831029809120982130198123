@@ -1348,6 +1348,30 @@ mouse.KeyUp:Connect(function(key)
     end
 end)
 
+local posing = false
+
+function pose()
+	game.Players.LocalPlayer.Backpack.Main.WalkSpeed.Value = 0
+	posing = true
+	local Anim = Instance.new("Animation")
+	Anim.AnimationId = "rbxassetid://7507481748"
+	local track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+	track:Play();
+	repeat wait() until posing == false 
+	track:Stop();
+	game.Players.LocalPlayer.Backpack.Main.WalkSpeed.Value = 65
+end
+
+mouse.KeyDown:Connect(function(key)
+    if key == "p" then
+    	if posing == false then 
+        	pose()
+	elseif posing == true then 
+		posing = false
+	end
+    end
+end)
+
 mouse.KeyDown:Connect(function(key)
     if key == "-" then
         Main.Visible = not Main.Visible
