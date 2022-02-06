@@ -993,9 +993,7 @@ mouse.KeyDown:Connect(function(k)
         CurrentPhase.Text = "Current Phase - No.3"
         k:AdjustSpeed(999)
     elseif k == "8" then 
-        chat("Greetings.")
-        wait(1)
-        chat("...")
+        chat("I didn't expect you to bring me this far...")
         phase3 = true
         CurrentPhase.Text = "Current Phase - No.4"
                 local userInputService = game:GetService("UserInputService")
@@ -1371,6 +1369,43 @@ mouse.KeyDown:Connect(function(key)
 	elseif posing == true then 
 		posing = false
 	end
+    end
+end)
+
+function Asset(id)
+    return "rbxassetid://"..id
+end
+
+function playanim(id)
+        local Anim = Instance.new("Animation")
+        Anim.AnimationId = id
+        local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+        k:Play();
+end 
+
+mouse.KeyDown:Connect(function(key)
+    if phase3 == false then return end
+    if key == "z" then
+	    local barraging = false
+	    playanim(Asset(4300091335))
+	    damage(Vector3.new(0, 20, 0), 40, "BoneHitEffect", 1, "Knockback")
+	    wait(2)
+	    local Anim = Instance.new("Animation")
+	    Anim.AnimationId = Asset(4820768545)
+	    local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+	    k:Play();
+	    barraging = true
+	    coroutine.resume(coroutine.create(function()
+		wait(5)
+		barraging = false
+	    end))
+	    repeat wait()
+		damage(Vector3.new(0, 0.001, 0), 10, "BurstEffect", 1, "Normal")
+	    until barraging == false
+	    k:Stop();
+	    wait()
+	    playanim(Asset(7018905078))
+	    damage(BodyParts.HumanoidRootPart.CFrame.lookVector * 170, 40, "BoneHitEffect", 1, "Knockback")
     end
 end)
 
