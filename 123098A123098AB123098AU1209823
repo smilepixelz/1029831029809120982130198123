@@ -1,3 +1,5 @@
+rconsoleprint("@@BLUE@@")
+rconsoleprint("Down For Maintnence, Reverting to Old Version (111203981A.109283Z)")
 game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
 game.ReplicatedStorage.Remotes.Functions:InvokeServer({getrenv()._G.Pass,"ChangeSetting","MorphEnabled",false})
 game.Players.LocalPlayer.PlayerGui.CharacterSelection.Character.Value = "Chara"
@@ -1373,95 +1375,6 @@ mouse.KeyDown:Connect(function(key)
 	elseif posing == true then 
 		posing = false
 	end
-    end
-end)
-
-function Asset(id)
-    return "rbxassetid://"..id
-end
-
-function playanim(id)
-        local Anim = Instance.new("Animation")
-        Anim.AnimationId = id
-        local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
-        k:Play();
-	return k.Length
-end 
-
-mouse.KeyDown:Connect(function(key)
-    if phase3 == false then return end
-    if key == "z" then
-	    local barraging = false
-	    playanim(Asset(4300091335))
-	    damage(Vector3.new(0, 20, 0), 40, "BoneHitEffect", 1, "Knockback")
-	    wait(2)
-	    local Anim = Instance.new("Animation")
-	    Anim.AnimationId = Asset(4820768545)
-	    local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
-	    k:Play();
-	    barraging = true
-	    coroutine.resume(coroutine.create(function()
-		wait(5)
-		barraging = false
-	    end))
-	    repeat wait()
-		damage(Vector3.new(0, 0.001, 0), 10, "BurstEffect", 1, "Normal")
-	    until barraging == false
-	    k:Stop();
-	    wait()
-	    playanim(Asset(7018905078))
-	    damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "BoneHitEffect", 1, "Knockback")
-    elseif key == "x" then 
-    	    damage(Vector3.new(0, 50, 0), 40, "BoneHitEffect", 1, "Knockback")
-	    wait(2)
-	    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = getlockchar().HumanoidRootPart.CFrame
-	    local j = playanim(Asset(4920871999))
-	    local k = true
-	    coroutine.resume(coroutine.create(function()
-	    	wait(j - 0.06)
-		k = false
-	    end))
-	    repeat wait()
-	    	damage(Vector3.new(0, 0.001, 0), 10, "BurstEffect", 1, "Normal", "LayingDown")
-	    until k == false
-	    damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "BoneHitEffect", 1, "Knockback")
-    end
-end)
-
-local barraging = false
-local deb = false
-function Barrage()
-    if deb == true then return end
-    deb = true
-    local Anim = Instance.new("Animation")
-    Anim.AnimationId = "rbxassetid://4820768545"
-    local track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
-    track:Play();
-    barraging = true
-    repeat wait()
-        damage(Vector3.new(0, -0.1, 0), 10, "LightHitEffect", 1, "Normal")
-        damage(Vector3.new(0, -0.1, 0), 5, "LightHitEffect", 1, "Normal")
-    until barraging == false
-    track:Stop();
-    local Anim = Instance.new("Animation")
-    Anim.AnimationId = "rbxassetid://5776260400"
-    local track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
-    track:Play();
-    damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "HeavyHitEffect", 1, "Knockback")
-    deb = false
-end
-
-mouse.KeyDown:Connect(function(key)
-    if phase3 == false then return end
-    if key == "v" then
-        Barrage()
-    end
-end)
-
-mouse.KeyUp:Connect(function(key)
-    if phase3 == false then return end
-    if key == "v" then
-       barraging = false
     end
 end)
 
