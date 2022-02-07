@@ -1,5 +1,3 @@
-rconsoleprint("@@BLUE@@")
-rconsoleprint("Down For Maintnence, Reverting to Old Version (111203981A.109283Z)")
 game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
 game.ReplicatedStorage.Remotes.Functions:InvokeServer({getrenv()._G.Pass,"ChangeSetting","MorphEnabled",false})
 game.Players.LocalPlayer.PlayerGui.CharacterSelection.Character.Value = "Chara"
