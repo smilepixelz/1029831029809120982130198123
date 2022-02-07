@@ -1391,25 +1391,89 @@ game.Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):C
             return
         end
         game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
-        local A_1 = 
-            {
-                [1] = getrenv()._G.Pass, 
-                [2] = "Chatted", 
-                [3] = "[CharaX]\n".."Dont think you've won just yet...",
-                [4] = Color3.fromRGB(255, 0, 0)
-            }
-        local Event = game:GetService("ReplicatedStorage").Remotes.Events
-        Event:FireServer(A_1)
-        wait(2)
-        local A_1 = 
-            {
-                [1] = getrenv()._G.Pass, 
-                [2] = "Chatted", 
-                [3] = "[CharaX]\n".."Because up until now I've just been playing with you.",
-                [4] = Color3.fromRGB(255, 255, 255)
-            }
-        local Event = game:GetService("ReplicatedStorage").Remotes.Events
-        Event:FireServer(A_1)
+        local ok = Instance.new("ScreenGui")
+        local dethframe = Instance.new("Frame")
+        local three = Instance.new("TextLabel")
+        local two = Instance.new("TextLabel")
+        local one = Instance.new("TextLabel")
+        local dialogue = Instance.new("TextLabel")
+         
+        ok.Name = "ok"
+        ok.Parent = game.CoreGui
+        ok.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        
+        dethframe.Name = "dethframe"
+        dethframe.Parent = ok
+        dethframe.BackgroundColor3 = Color3.new(0, 0, 0)
+        dethframe.Size = UDim2.new(0, 99999, 0, 99999)
+        
+        three.Name = "three"
+        three.Parent = dethframe
+        three.BackgroundColor3 = Color3.new(1, 1, 1)
+        three.BackgroundTransparency = 1
+        three.Size = UDim2.new(0, 1920, 0, 131)
+        three.Font = Enum.Font.Arcade
+        three.Text = "Dont give up..."
+        three.TextColor3 = Color3.new(1, 1, 1)
+        three.TextScaled = true
+        three.TextSize = 14
+        three.TextWrapped = true
+        
+        two.Name = "two"
+        two.Parent = dethframe
+        two.BackgroundColor3 = Color3.new(1, 1, 1)
+        two.BackgroundTransparency = 1
+        two.Position = UDim2.new(0, 0, 0.00883008912, 0)
+        two.Size = UDim2.new(0, 1920, 0, 52)
+        two.Font = Enum.Font.Arcade
+        two.Text = "Phase 2"
+        two.TextColor3 = Color3.new(1, 1, 1)
+        two.TextScaled = true
+        two.TextSize = 14
+        two.TextWrapped = true
+        
+        one.Name = "one"
+        one.Parent = dethframe
+        one.BackgroundColor3 = Color3.new(1, 1, 1)
+        one.BackgroundTransparency = 1
+        one.Position = UDim2.new(0, 0, 0.00151001511, 0)
+        one.Size = UDim2.new(0, 1920, 0, 51)
+        one.Font = Enum.Font.Arcade
+        one.Text = game.Players.LocalPlayer.Character.Name.."!"
+        one.TextColor3 = Color3.new(1, 1, 1)
+        one.TextScaled = true
+        one.TextSize = 14
+        one.TextWrapped = true
+        
+        dialogue.Name = "dialogue"
+        dialogue.Parent = dethframe
+        dialogue.BackgroundColor3 = Color3.new(1, 1, 1)
+        dialogue.BackgroundTransparency = 1
+        dialogue.Position = UDim2.new(0, 0, 0.00402004039, 0)
+        dialogue.Size = UDim2.new(0, 1920, 0, 131)
+        dialogue.Font = Enum.Font.Arcade
+        dialogue.Text = ""
+        dialogue.TextColor3 = Color3.new(1, 1, 1)
+        dialogue.TextScaled = true
+        dialogue.TextSize = 14
+        dialogue.TextWrapped = true
+
+        local text = string.split("You Feel A Burning Sensation in Your Soul..... You feel like you can keep fighting.", "")
+    	local time2 = 0.05
+    	for i,v in pairs(text) do wait(time2)
+    		if v == "." then 
+    			wait(1)
+    			dialogue.Text = dialogue.Text..v
+    		else 
+    			dialogue.Text = dialogue.Text..v
+    		end
+    	end
+    	wait(5)
+	    game:GetService("TweenService"):Create(dialogue, TweenInfo.new(0.4), {TextTransparency = 1}):Play()
+        
+        wait(1)
+        
+        ok:Destroy()
         game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
         
         phase2 = true
