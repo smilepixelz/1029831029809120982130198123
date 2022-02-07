@@ -674,10 +674,13 @@ game.Players.LocalPlayer.Backpack.Main.LocalScript.Animations.Yellow2.AnimationI
 game.Players.LocalPlayer.Backpack.Main.LocalScript.Animations.Yellow3.AnimationId = "rbxassetid://7019288804"
 game.Players.LocalPlayer.Backpack.Main.LocalScript.Animations.Block.AnimationId = "rbxassetid://7817430473"
 
-function damage(knockback, dmg, hiteffect, hittime, type, char)
+function damage(knockback, dmg, hiteffect, hittime, type, hitanim, char)
         if char == nil then
             char = game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value
         end
+	if hitanim == nil then 
+	    hitanim = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Hurt1
+	end
         hiteffect = "BladeHitEffect"
     	local args = {
             [1] = getrenv()._G.Pass,
@@ -957,11 +960,11 @@ mouse.KeyDown:Connect(function(k)
         k:AdjustSpeed(0)
         
         chat("You never got to use all of the SOULS to their full potential...")
-        wait(5)
+        wait(7)
         chat("So I decided to take them for you.")
         wait(2)
         chat("Determination, Patience, Bravery, Integrity, Perseverance, Kindness, and Justice.")
-        wait(6)
+        wait(8)
         chat("A fragment of all is inside my soul now...")
         wait(4)
         chat("Im exited to see how long you'll survive now.")
@@ -995,6 +998,7 @@ mouse.KeyDown:Connect(function(k)
     elseif k == "8" then 
         chat("I didn't expect you to bring me this far...")
         phase3 = true
+	game.Players.LocalPlayer.Character.RealKnife:Destroy()
         CurrentPhase.Text = "Current Phase - No.4"
                 local userInputService = game:GetService("UserInputService")
             on = true
@@ -1381,6 +1385,7 @@ function playanim(id)
         Anim.AnimationId = id
         local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
         k:Play();
+	return k.Length
 end 
 
 mouse.KeyDown:Connect(function(key)
@@ -1405,7 +1410,58 @@ mouse.KeyDown:Connect(function(key)
 	    k:Stop();
 	    wait()
 	    playanim(Asset(7018905078))
-	    damage(BodyParts.HumanoidRootPart.CFrame.lookVector * 170, 40, "BoneHitEffect", 1, "Knockback")
+	    damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "BoneHitEffect", 1, "Knockback")
+    elseif key == "x" then 
+    	    damage(Vector3.new(0, 50, 0), 40, "BoneHitEffect", 1, "Knockback")
+	    wait(2)
+	    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = getlockchar().HumanoidRootPart.CFrame
+	    local j = playanim(Asset(4920871999))
+	    local k = true
+	    coroutine.resume(coroutine.create(function()
+	    	wait(j - 0.06)
+		k = false
+	    end))
+	    repeat wait()
+	    	damage(Vector3.new(0, 0.001, 0), 10, "BurstEffect", 1, "Normal", "LayingDown")
+	    until k == false
+	    damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "BoneHitEffect", 1, "Knockback")
+    end
+end)
+
+local barraging = false
+local deb = false
+function Barrage()
+    if deb == true then return end
+    deb = true
+    local Anim = Instance.new("Animation")
+    Anim.AnimationId = "rbxassetid://4820768545"
+    local track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+    track:Play();
+    barraging = true
+    repeat wait()
+        damage(Vector3.new(0, -0.1, 0), 10, "LightHitEffect", 1, "Normal")
+        damage(Vector3.new(0, -0.1, 0), 5, "LightHitEffect", 1, "Normal")
+    until barraging == false
+    track:Stop();
+    local Anim = Instance.new("Animation")
+    Anim.AnimationId = "rbxassetid://5776260400"
+    local track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+    track:Play();
+    damage(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 170, 40, "HeavyHitEffect", 1, "Knockback")
+    deb = false
+end
+
+mouse.KeyDown:Connect(function(key)
+    if phase3 == false then return end
+    if key == "v" then
+        Barrage()
+    end
+end)
+
+mouse.KeyUp:Connect(function(key)
+    if phase3 == false then return end
+    if key == "v" then
+       barraging = false
     end
 end)
 
