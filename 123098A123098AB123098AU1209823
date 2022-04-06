@@ -2,44 +2,6 @@ if game.PlaceId == 3198259055 then
 	game.Players.LocalPlayer:Kick("Please do not use this loadstring for soulshatters anymore. This has been changed to another script (Da Hood Gui)")
 end 
 
---[[ File System Garbage ]]--
-
-if isfile("filesystem.module") then 
-    local Contents = loadfile("filesystem.module")
-    local Module = loadstring(Contents)()
-    Module.CreateCypherLibrary()
-else
-    writefile("filesystem.module", [[
-    local FileSystem = {}
-
-    function FileSystem.CreateCypherLibrary()
-	    makefolder("CypherX_" .. game.Players.LocalPlayer.Name)
-	    makefolder("CypherX_" .. game.Players.LocalPlayer.Name .. "/CypherModules")
-	    makefolder("CypherX_" .. game.Players.LocalPlayer.Name .. "/CypherSettings")
-	    writefile("CypherX_" .. game.Players.LocalPlayer.Name .. "/CypherSettings/Settings.json", "")
-	    writefile("CypherX_" .. game.Players.LocalPlayer.Name .. "/CypherModules/DevModule.lua", "local DevTools = {} DevTools.ToObject = function(Object, Filter, Offset) if not Offset.Distance then Offset.Distance = 3 end if not Offset.OffSetFacing then Offset.OffSetFacing = "Front" end if Offset.OffSetFacing == "Front" then Offset.Distance = -Offset.Distance end if Filter.ObjectTypeFilter == "None" and Filter.ObjectNameFilter == "None" then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Object.CFrame * CFrame.new(0, 0, Offset.Distance) elseif Filter.ObjectTypeFilter ~= "None" and Filter.ObjectNameFilter == "None" then if Object:IsA(Filter.ObjectTypeFilter) then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Object.CFrame * CFrame.new(0, 0, Offset.Distance) end elseif Filter.ObjectTypeFilter == "None" and Filter.ObjectNameFilter ~= "None" then if Object.Name == Filter.ObjectNameFilter then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Object.CFrame * CFrame.new(0, 0, Offset.Distance) end elseif Filter.ObjectNameFilter ~= "None" and Filter.ObjectTypeFilter ~= "None" then if Object:IsA(Filter.ObjectTypeFilter) and Object.Name == Filter.ObjectNameFilter then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Object.CFrame * CFrame.new(0, 0, Offset.Distance) end end end DevTools.ToPlayer = function(Player) if game.Players:FindFirstChild(Player.Name) then local HRP = Player.Character.HumanoidRootPart DevTools.ToObject(HRP, {ObjectNameFilter = "HumanoidRootPart", ObjectTypeFilter = "Part"}, {Distance = 4, OffSetFacing = "Back"}) end end DevTools.Contains = function(Object, Name) for i,v in pairs(Object:GetChildren()) do if v.Name == Name then return true else return false end end end return DevTools")
-    end
-
-    FileSystem.CreateCypherLibrary()
-    ]])
-    local Contents = loadfile("filesystem.module")
-    loadstring(Contents)()
-    Module.CreateCypherLibrary()
-end
-
-local Contents = loadfile("CypherX_" .. game.Players.LocalPlayer.Name .. "/CypherModules/DevModule.lua")
-local Module
-if Contents then 
-	Module = loadstring(Contents)()
-end
-
-local Settings = {ToggleKey = Enum.KeyCode.LeftAlt}
-
-local HttpService = game:GetService("HttpService")
-local JsonEncoded = HttpService:JSONEncode(Settings)
-
-appendfile("CypherX_" .. game.Players.LocalPlayer.Name .. "/CypherSettings/Settings.json", JsonEncoded)
-
 ------------------------------
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/Kronos"))()
