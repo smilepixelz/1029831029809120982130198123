@@ -70,6 +70,14 @@ local shopping = shop:Section({
    Title = "Section"
 })
 
+local fighting = player:AddColumn({
+   Title = "Combat"
+})
+
+local combat = fighting:Section({
+   Title = "Section"
+})
+
 local OldNameCall = nil
 OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
     local Args = {...}
@@ -391,6 +399,33 @@ function Reach(F)
         A = AttackVal.Changed:Connect(function(NV) if o == false then A:Disconnect() end AttackValV(NV) end)
     end
 end  
+local Id
+function CustomCursor()
+	local userInputService = game:GetService("UserInputService")
+ 
+	userInputService.MouseIconEnabled = false
+
+	local Cursor = game:GetObjects("rbxassetid://9296064086")[1]
+	Cursor.Parent = game:GetService("CoreGui")
+	Cursor.ImageLabel.Image = "rbxassetid://"..Id or "rbxassetid://9296053304"
+
+	local function setAbsolutePosition(gui, position)
+	    local relativePosition = position - gui.Parent.AbsolutePosition
+	    gui.Position = UDim2.fromOffset(relativePosition.X, relativePosition.Y)
+	end
+
+	game:GetService("RunService").Heartbeat:Connect(function()
+	    local camera = workspace.CurrentCamera
+	    local worldPoint = game.Players.LocalPlayer:GetMouse().Hit.p
+	    local vector, onScreen = camera:WorldToScreenPoint(worldPoint)
+
+	    local screenPoint = Vector2.new(vector.X, vector.Y)
+	    setAbsolutePosition(Cursor.ImageLabel, screenPoint)
+	end)
+end
+function ChangeCursorId(t)
+	Id = t
+end
 
 anti:Toggle({Text = "Anti Slow", State = false, Callback = AntiSlow})
 anti:Toggle({Text = "Anti Stomp", Callback = AntiStomp})
@@ -409,6 +444,8 @@ local V = plrcheats:Dropdown({Text = "Teleport to Player", List = ReturnPlrs(), 
 visuals:Button({Text = "Low Graphics", Callback = LowGraphics})
 visuals:Button({Text = "Ultra Low Graphics", Callback = UltraLowGraphics})
 visuals:Slider({Text = "FOV Slider", Min = 0, Max = 150, Def = 70, Callback = ChangeFOV})
+visuals:Button({Text = "Custom Cursor", Callback = CustomCursor})
+visuals:Textbox({Text = "Cursor Id ( Leave Blank If You Want Default )", Callback = ChangeCursorId})
 shopping:Dropdown({Text = "Auto Buy", List = GetShopItems(), Callback = AutoBuy})
 shopping:Textbox({Text = "Ammount of Item To Buy ( Ammo Only )", Callback = ChangeAmm})
 credit:TextLabel({Text = "lolok#6439 - 90% of the scripting"})
