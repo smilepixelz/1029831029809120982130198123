@@ -464,7 +464,7 @@ function HandControl(K)
 	local E 
 	E = game:GetService("RunService").Heartbeat:Connect(function()
 	    if L == false then 
-	    	E:Disconnect(0
+	    	E:Disconnect()
 	    end
 	    local Tween = TS:Create(game.Players.LocalPlayer.Character.LeftHand, TInfo, {CFrame = CFrame.new(game.Players.LocalPlayer:GetMouse().Hit.p)})
 	    local Tween2 = TS:Create(game.Players.LocalPlayer.Character.RightHand, TInfo, {CFrame = CFrame.new(game.Players.LocalPlayer:GetMouse().Hit.p)})
