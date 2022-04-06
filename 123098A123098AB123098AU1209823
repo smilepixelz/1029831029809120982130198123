@@ -426,10 +426,58 @@ end
 function ChangeCursorId(t)
 	Id = t
 end
+function AntiGrab(J)
+   Z1 = J
+   local A
+   A = game.Players.LocalPlayer.Character.ChildAdded:Connect(function(Child)
+	if Child.Name == "GRABBING_CONSTRAINT" then 
+	   Child:Destroy()
+       end
+   end)
+   if Z1 == false then 
+   	A:Disconnect()
+   end
+end
+
+function HandControl(K)
+	L = K
+	local OldNameCall = nil
+	OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
+	    local Args = {...}
+	    if not checkcaller() and getnamecallmethod() == "FireServer" and Self.Name == "MainEvent" then
+		if Args[1] == "CHECKER_1" or Args[1] == "CHECKER_1" or Args[1] == "TeleportDetect" then 
+		  return nil
+		end
+	    end
+	    return OldNameCall(Self, ...)
+	end)
+
+	game.Players.LocalPlayer.Character.RightHand["RightWrist"]:Destroy()
+	game.Players.LocalPlayer.Character.RightHand.Massless = true
+	game.Players.LocalPlayer.Character.LeftHand["LeftWrist"]:Destroy()
+	game.Players.LocalPlayer.Character.LeftHand.Massless = true
+
+	local TInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quart)
+
+	local TS = game:GetService("TweenService")
+
+	local E 
+	E = game:GetService("RunService").Heartbeat:Connect(function()
+	    if L == false then 
+	    	E:Disconnect(0
+	    end
+	    local Tween = TS:Create(game.Players.LocalPlayer.Character.LeftHand, TInfo, {CFrame = CFrame.new(game.Players.LocalPlayer:GetMouse().Hit.p)})
+	    local Tween2 = TS:Create(game.Players.LocalPlayer.Character.RightHand, TInfo, {CFrame = CFrame.new(game.Players.LocalPlayer:GetMouse().Hit.p)})
+	    Tween:Play();
+	    Tween2:Play();
+	end)
+	
+end
 
 anti:Toggle({Text = "Anti Slow", State = false, Callback = AntiSlow})
-anti:Toggle({Text = "Anti Stomp", Callback = AntiStomp})
-anti:Toggle({Text = "Anti Bag", Callback = AntiBag})
+anti:Toggle({Text = "Anti Stomp", State = false, Callback = AntiStomp})
+anti:Toggle({Text = "Anti Bag", State = false, Callback = AntiBag})
+anti:Toggle({Text = "Anti Grab", State = false, Callback = AntiGrab})
 plrcheats:Button({Text = "God Bullet", Callback = GodBullet})
 plrcheats:Button({Text = "God Block", Callback = GodBlock})
 plrcheats:Button({Text = "Godmode", Callback = Godmode})
