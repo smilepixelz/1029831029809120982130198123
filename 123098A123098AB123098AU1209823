@@ -10,7 +10,7 @@ local window = library:Window({
    Title = "CypherX - By lolok#6439",
    Accent = Color3.fromRGB(69,69,207),
    Logo = 3610245066,
-   ToggleKey = HttpService:JSONDecode(loadfile('CypherX_" .. game.Players.LocalPlayer.Name .. "/CypherSettings/Settings.json"))
+   ToggleKey = Enum.KeyCode.LeftAlt
 })
 
 local tab = window:NewTab({
