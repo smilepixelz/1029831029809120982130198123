@@ -407,7 +407,7 @@ function CustomCursor()
 
 	local Cursor = game:GetObjects("rbxassetid://9296064086")[1]
 	Cursor.Parent = game:GetService("CoreGui")
-	Cursor.ImageLabel.Image = "rbxassetid://"..Id or "rbxassetid://9296053304"
+	Cursor.ImageLabel.Image = Id or "rbxassetid://9296053304"
 
 	local function setAbsolutePosition(gui, position)
 	    local relativePosition = position - gui.Parent.AbsolutePosition
@@ -424,7 +424,7 @@ function CustomCursor()
 	end)
 end
 function ChangeCursorId(t)
-	Id = t
+	Id = "rbxassetid://"..t
 end
 function AntiGrab(J)
    Z1 = J
