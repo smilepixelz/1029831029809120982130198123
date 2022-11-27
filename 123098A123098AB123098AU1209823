@@ -1,8 +1,8 @@
--- << ASGORE CREATED BY LOLOK#6439 >> --
-
 -- UPDATE 1 -- 
 -- RELEASED -- 
 -- SECURITY LAYER NUMBER 1 --
+
+-- << ASGORE CREATED BY LOLOK#6439 >> --
 
 local ClientModule = require(game.ReplicatedStorage.ClientModules.MainModule);
 
@@ -51,22 +51,6 @@ function spearColor(x)
 		end;
 	end);
 end;
-
-local mods = {1184622258} -- ewwwww mods
-game:GetService("RunService").Heartbeat:Connect(function()
-    for _,v in pairs(mods) do 
-        if game.Players.LocalPlayer.UserId==v then 
-            game.Players.LocalPlayer:Kick("Please refrain from trying to use this script. (Moderator and or Admin)");
-        end
-    end
-    for _,v in pairs(mods) do 
-        for _,x in pairs(game.Players:GetChildren()) do 
-            if x.UserId == v then 
-                game.Players.LocalPlayer:Kick("A Moderator and or Admin has been detected in this game, please join a different or you may be banned.");
-            end 
-        end
-    end
-end)
 
 function LoadAs(char, onload, phases)
     game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
@@ -146,11 +130,13 @@ end)
 
 repeat wait(); until (game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Backpack:FindFirstChild("Main"));
 
+
 local CameraShaker = require(game.ReplicatedStorage.ClientModules.CameraShaker)
 local camera = game.Workspace.CurrentCamera
 local camShake = CameraShaker.new(Enum.RenderPriority.Camera.Value, function(shakeCf)
 	camera.CFrame = camera.CFrame * shakeCf
 end)
+
 camShake:Start()
 
 local Players = game.Players
@@ -173,6 +159,32 @@ local BodyParts = {} do
         end
     end
 end
+
+function AfterImage(color3, material, duration)
+    for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do 
+        if table.find(BodyParts, v.Name) then
+            local part = Instance.new("Part")
+            part.Anchored = true 
+            part.CanCollide = false 
+            part.Massless = true 
+            part.CFrame = v.CFrame
+            part.Size = v.Size
+            part.Color = color3
+            part.Material = Enum.Material[material]
+            game:GetService("TweenService"):Create(part,TweenInfo.new(duration),{Transparency = 1}):Play()
+            if v.Name == "Head" then 
+                local mesh = Instance.new("SpecialMesh")
+                mesh.MeshType = Enum.MeshType.Head 
+                mesh.Scale = Vector3.new(1.25,1.25,1.25)
+                mesh.Parent = part
+            end
+            part.Parent = workspace 
+            game.Debris:AddItem(part, duration)
+            
+        end
+    end
+end
+
 
 local BindApi = {Cooldowns = {}} do 
     function BindApi:BindTo(Key, Function, Cooldown)
@@ -831,46 +843,95 @@ task.spawn(function()
     end,7)
     
     BindApi:BindTo("Two", function()
-        SetCooldown(MovesInterface["2"], 5):Activate() ;
-        for _,v in pairs(game.Players:GetPlayers()) do 
-            if v.Character then 
-                v = v.Character 
-                if v.Humanoid.Health > 0 then 
-                    local hrp = v.HumanoidRootPart 
-                    local mag = (Character.HumanoidRootPart.Position-hrp.Position).Magnitude;
-                    if mag <= 8 then
-                        Damage({
-                            ["Type"] = "Normal", 
-                            ["HitTime"] = 1, 
-                            ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Hurt1, 
-                            ["Position"] = BodyParts.HumanoidRootPart.Position, 
-                            ["HitEffect"] = "BiggerBurstEffect", 
-                            ["CombatInv"] = true, 
-                            ["Sound"] = game:GetService("ReplicatedStorage").Sounds.KnifeHit, 
-                            ["Damage"] = 2,
-                            ["BlockAble"] = false,
-                            ["PerfectBlockable"] = false,
-                            ["Character"] = v
-                        })
-                        delay(1, function() 
-                            Damage({
-                                ["Type"] = "Knockback", 
-                                ["HitTime"] = 1, 
-                                ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Hurt1, 
-                                ["Velocity"] = hrp.CFrame:Inverse().LookVector*175+Vector3.new(0,20,0), 
-                                ["HitEffect"] = "BiggerBurstEffect", 
-                                ["CombatInv"] = true, 
-                                ["Sound"] = game:GetService("ReplicatedStorage").Sounds.KnifeHit, 
-                                ["Damage"] = 15,
-                                ["BlockAble"] = false,
-                                ["PerfectBlockable"] = false,
-                                ["Character"] = v
-                            })
+        SetCooldown(MovesInterface["2"], 10):Activate() ;
+        local start = PlayAnimation("rbxassetid://4531324200")
+        start:AdjustSpeed(3)
+        delay(.5,function()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame * CFrame.new(0,0,3)
+            task.wait(.2)
+            local start2 = PlayAnimation("rbxassetid://4531368612");
+            start2:AdjustSpeed(2)
+            Shake("Explosion");
+            Damage({
+                ["Type"] = "Normal", 
+                ["HitTime"] = 1, 
+                ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.SpearHurt, 
+                ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.LookVector*-1, 
+                ["HitEffect"] = "BurstEffect", 
+                ["CombatInv"] = true, 
+                ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Stab, 
+                ["Damage"] = 5,
+                ["BlockAble"] = false,
+                ["PerfectBlockable"] = false
+            })
+            task.wait(.2);
+            local middle = PlayAnimation("rbxassetid://4521624762")
+            middle:AdjustSpeed(2)
+            delay(.2,function()
+                Shake("Bump")
+                Damage({
+                    ["Type"] = "Normal", 
+                    ["HitTime"] = 1, 
+                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.SpearHurt, 
+                    ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.LookVector*1, 
+                    ["HitEffect"] = "LightHitEffect"..math.random(2,3), 
+                    ["CombatInv"] = true, 
+                    ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Punch, 
+                    ["Damage"] = 5,
+                    ["BlockAble"] = false,
+                    ["PerfectBlockable"] = false
+                })
+                local mid2 = PlayAnimation("rbxassetid://4521628546")
+                mid2:AdjustSpeed(2)
+                delay(.3,function()
+                    Shake("Explosion")
+                    Damage({
+                        ["Type"] = "Knockback", 
+                        ["HitTime"] = 1, 
+                        ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback1, 
+                        ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.UpVector*120, 
+                        ["HitEffect"] = "HeavyHitEffect", 
+                        ["CombatInv"] = true, 
+                        ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick, 
+                        ["Damage"] = 5,
+                        ["BlockAble"] = false,
+                        ["PerfectBlockable"] = false
+                    })
+                    local end1 = PlayAnimation("rbxassetid://4531711725")
+                    end1:AdjustSpeed(2)
+                    delay(.2,function()
+                        local end2 = PlayAnimation("rbxassetid://4521638309")
+                        task.wait(.2);
+                        game:GetService("ReplicatedStorage").Remotes.UndyneMoves:InvokeServer({ getrenv()._G.Pass, "Effect", "HighJump", game.Players.LocalPlayer.Character.HumanoidRootPart.Position*Vector3.new(0,-2,0)});
+                        local v = require(game:GetService("ReplicatedStorage").ClientModules.MainModule);
+                        v.CreateBodyMover({"BodyVelocity", game.Players.LocalPlayer.Character.HumanoidRootPart, Vector3.new(1000000, 100000, 1000000), game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 0 + Vector3.new(0,150,0), 1})
+                        delay(1,function()
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
+                            local end3 = PlayAnimation("rbxassetid://4521644939")
+                            delay(.2,function()
+                                Shake("BigExplosion")
+                                Damage({
+                                    ["Type"] = "Knockback", 
+                                    ["HitTime"] = 1, 
+                                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback1, 
+                                    ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.UpVector*-150 + BodyParts.HumanoidRootPart.CFrame.LookVector * 50, 
+                                    ["HitEffect"] = "BiggerBurstEffect", 
+                                    ["CombatInv"] = true, 
+                                    ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick, 
+                                    ["Damage"] = 15,
+                                    ["BlockAble"] = false,
+                                    ["PerfectBlockable"] = false
+                                })
+                                task.wait(.2);
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+                                task.wait(.2);
+                                v.CreateBodyMover({"BodyVelocity", game.Players.LocalPlayer.Character.HumanoidRootPart, Vector3.new(1000000, 100000, 1000000), game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 0 + Vector3.new(0,-200,0), .5})
+                            end)
                         end)
-                    end
-                end
-            end
-        end
+                    end)
+                end)
+            end)
+        end)
     end, 5)
     BindApi:BindTo("Three", function()
         if GetLocked() then
@@ -1075,6 +1136,164 @@ task.spawn(function()
            Barraging = false;
         end
     end)
+    BindApi:BindTo("Seven", function()
+        running=true
+        local start = PlayAnimation("rbxassetid://7003950381")
+        start:AdjustSpeed(1.5)
+        delay(.5,function()
+            task.spawn(function()
+                local ran
+                ran = game:WaitForChild("Run Service").Heartbeat:Connect(function()
+                    if running then task.wait(.2) AfterImage(Color3.new(1,1,1),"ForceField",.5) elseif not running then ran:Disconnect() end
+                end)
+            end)
+            start:Stop()
+            Shake("Explosion");
+            Damage({
+                ["Type"] = "Knockback", 
+                ["HitTime"] = 1, 
+                ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback3, 
+                ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.UpVector*-10, 
+                ["HitEffect"] = "BurstEffect", 
+                ["CombatInv"] = true, 
+                ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick, 
+                ["Damage"] = 0,
+                ["BlockAble"] = false,
+                ["PerfectBlockable"] = false
+            })
+            local mid = PlayAnimation("rbxassetid://5858687214")
+            delay(.2,function()
+                Shake("Explosion");
+                Damage({
+                    ["Type"] = "Normal", 
+                    ["HitTime"] = 1, 
+                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback3, 
+                    ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.UpVector*50,
+                    ["Position"] = game:GetService("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.Torso.Position + BodyParts.HumanoidRootPart.CFrame.UpVector*20 + BodyParts.HumanoidRootPart.CFrame.LookVector*20,
+                    ["HitEffect"] = "BurstEffect", 
+                    ["CombatInv"] = true, 
+                    ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick, 
+                    ["Damage"] = 0,
+                    ["BlockAble"] = false,
+                    ["PerfectBlockable"] = false
+                })
+                task.wait(.6);
+                tar = game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame + game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame.LookVector * .5
+                game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Flying)
+                v2 = Instance.new('BodyPosition',game.Players.LocalPlayer.Character.HumanoidRootPart) 
+                fol = Instance.new('Folder',v2)
+                v2.Name = 'Client' 
+                v2.MaxForce = Vector3.new(1,1,1)*100000 
+                v2.D = 2500 
+                v2.P = 100000
+                v2.Position = (tar).p
+                delay(2,function()
+                    v2:Destroy()
+                end)
+                task.wait(.4)
+                Damage({
+                    ["Type"] = "Normal", 
+                    ["HitTime"] = 1, 
+                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback2, 
+                    ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.LookVector*2,
+                    ["HitEffect"] = "BurstEffect", 
+                    ["CombatInv"] = true, 
+                    ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick, 
+                    ["Damage"] = 0,
+                    ["BlockAble"] = false,
+                    ["PerfectBlockable"] = false
+                })
+                task.wait(.2)
+                Damage({
+                    ["Type"] = "Normal", 
+                    ["HitTime"] = 1, 
+                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback2, 
+                    ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.LookVector*2,
+                    ["HitEffect"] = "BurstEffect", 
+                    ["CombatInv"] = true, 
+                    ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Punch, 
+                    ["Damage"] = 0,
+                    ["BlockAble"] = false,
+                    ["PerfectBlockable"] = false
+                })
+                task.wait(.3)
+                local mid2 = PlayAnimation("rbxassetid://4575857193")
+                task.wait(.3)
+                mid2:AdjustSpeed(.3)
+                Shake("Explosion");
+                Damage({
+                    ["Type"] = "Normal", 
+                    ["HitTime"] = 2.5, 
+                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback2, 
+                    ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.LookVector*2,
+                    ["HitEffect"] = "BurstEffect", 
+                    ["CombatInv"] = true, 
+                    ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick, 
+                    ["Damage"] = 0,
+                    ["BlockAble"] = false,
+                    ["PerfectBlockable"] = false
+                })
+                task.wait(.3)
+                mid2:AdjustSpeed(1)
+                task.wait(.2)
+                tar = game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame + game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame.LookVector * 100 + game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame.UpVector * 100
+                game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Flying)
+                v2 = Instance.new('BodyPosition',game.Players.LocalPlayer.Character.HumanoidRootPart) 
+                fol = Instance.new('Folder',v2)
+                v2.Name = 'Client' 
+                v2.MaxForce = Vector3.new(1,1,1)*100000 
+                v2.D = 2500 
+                v2.P = 100000
+                v2.Position = (tar).p
+                delay(.3,function()
+                    v2:Destroy()
+                end)
+                local mid3 = PlayAnimation("rbxassetid://4524518208")
+                mid3:AdjustSpeed(2)
+                task.wait(.5)
+                local end1 = PlayAnimation("rbxassetid://4524522575")
+                end1:AdjustSpeed(1.5)
+                tar = game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame + game:service("Players").LocalPlayer.Backpack.Main.LockOnScript.LockOn.Value.HumanoidRootPart.CFrame.LookVector * .5
+                game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Flying)
+                v2 = Instance.new('BodyPosition',game.Players.LocalPlayer.Character.HumanoidRootPart) 
+                fol = Instance.new('Folder',v2)
+                v2.Name = 'Client' 
+                v2.MaxForce = Vector3.new(1,1,1)*100000 
+                v2.D = 2500 
+                v2.P = 100000
+                v2.Position = (tar).p
+                delay(1,function()
+                    v2:Destroy()
+                end)
+                task.wait(.7)
+                Shake("Explosion");
+                Damage({
+                    ["Type"] = "Normal", 
+                    ["HitTime"] = 1, 
+                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback2, 
+                    ["HitEffect"] = "BurstEffect", 
+                    ["CombatInv"] = true, 
+                    ["Damage"] = 0,
+                    ["BlockAble"] = false,
+                    ["PerfectBlockable"] = false
+                })
+                task.wait()
+                Damage({
+                    ["Type"] = "Knockback", 
+                    ["HitTime"] = 1, 
+                    ["HurtAnimation"] = game:GetService("ReplicatedStorage").Animations.HurtAnimations.Knockback2, 
+                    ["Velocity"] = BodyParts.HumanoidRootPart.CFrame.LookVector*50+BodyParts.HumanoidRootPart.CFrame.UpVector*-50,
+                    ["HitEffect"] = "BurstEffect", 
+                    ["CombatInv"] = true, 
+                    ["Sound"] = game:GetService("ReplicatedStorage").Sounds.Kick, 
+                    ["Damage"] = 40,
+                    ["BlockAble"] = false,
+                    ["PerfectBlockable"] = false
+                })
+                running=false
+            end)
+        end)
+    end,10)
 end)
 
 workspace.ServerEffects.ServerCooldown:Destroy();
